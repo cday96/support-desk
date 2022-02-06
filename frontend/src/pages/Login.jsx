@@ -2,6 +2,8 @@ import React from "react"
 import { useState } from "react"
 import { FaSignInAlt } from "react-icons/fa"
 import { toast } from "react-toastify"
+import { useSelector, useDispatch } from "react-redux"
+import { login } from "../features/auth/authSlice"
 
 function Login() {
 	const [formData, setFormData] = useState({
@@ -10,6 +12,15 @@ function Login() {
 	})
 
 	const { email, password } = formData
+
+	// Use dispatch from redux to dispatch to reducer
+	const dispatch = useDispatch()
+
+	// Use selector from redux to access items in one of our global states
+	const { user, message, isLoading, isSuccess, isError } = useSelector(
+		// access the items in our global state -> auth state set in authSlice
+		(state) => state.auth
+	)
 
 	const handleChange = (e) => {
 		setFormData((prevState) => ({
@@ -20,6 +31,12 @@ function Login() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
+		const userData = {
+			email: email,
+			password: password,
+		}
+		// Dispatch the user data to login function in authSlice
+		dispatch(login(userData))
 	}
 
 	return (
