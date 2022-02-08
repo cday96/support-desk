@@ -1,9 +1,10 @@
 import React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FaUser } from "react-icons/fa"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { register } from "../features/auth/authSlice"
+import { register, reset } from "../features/auth/authSlice"
 
 function Register() {
 	const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ function Register() {
 
 	const { name, email, password, password2 } = formData
 
+	const navigate = useNavigate()
+
 	// Use dispatch from redux to dispatch to reducer
 	const dispatch = useDispatch()
 
@@ -23,6 +26,22 @@ function Register() {
 		// access the items in our global state -> auth state set in authSlice
 		(state) => state.auth
 	)
+
+	// useEffect based on redu state brought in with useSelector
+	useEffect(() => {
+		// show message in state if isError state true
+		if (isError) {
+			toast.error(message)
+		}
+
+		// redirect if isSuccess state true and user in state
+		if (isSuccess || user) {
+			navigate("/")
+		}
+
+		// dispath to reset reducer to reset elements of state sans user
+		dispatch(reset())
+	}, [isError, isSuccess, user, message, navigate, dispatch])
 
 	const handleChange = (e) => {
 		setFormData((prevState) => ({
@@ -94,7 +113,7 @@ function Register() {
 						<input
 							className="form-control"
 							id="password2"
-							type="password2"
+							type="password"
 							value={password2}
 							onChange={handleChange}
 							placeholder="Confirm password"
