@@ -5,6 +5,7 @@ import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { login, reset } from "../features/auth/authSlice"
+import Spinner from "../components/Spinner"
 
 function Login() {
 	const [formData, setFormData] = useState({
@@ -54,6 +55,10 @@ function Login() {
 		}
 		// Dispatch the user data to login function in authSlice
 		dispatch(login(userData))
+	}
+
+	if (isLoading) {
+		return <Spinner />
 	}
 
 	return (
