@@ -1,9 +1,10 @@
 import React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FaSignInAlt } from "react-icons/fa"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { login } from "../features/auth/authSlice"
+import { login, reset } from "../features/auth/authSlice"
 
 function Login() {
 	const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ function Login() {
 
 	const { email, password } = formData
 
+	const navigate = useNavigate()
+
 	// Use dispatch from redux to dispatch to reducer
 	const dispatch = useDispatch()
 
@@ -21,6 +24,20 @@ function Login() {
 		// access the items in our global state -> auth state set in authSlice
 		(state) => state.auth
 	)
+
+	// useEffect based on redux state brought in with use selector
+	useEffect(() => {
+		// show message in state if isError state true
+		if (isError) {
+			toast.error(message)
+		}
+		// redirect if isSuccess state true and user in state
+		if (isSuccess || user) {
+			navigate("/")
+		}
+		// dispath to reset reducer to reset elements of state sans user
+		dispatch(reset())
+	}, [user, message, isError, isSuccess, navigate, dispatch])
 
 	const handleChange = (e) => {
 		setFormData((prevState) => ({

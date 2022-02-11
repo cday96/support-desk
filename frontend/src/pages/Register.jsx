@@ -27,7 +27,7 @@ function Register() {
 		(state) => state.auth
 	)
 
-	// useEffect based on redu state brought in with useSelector
+	// useEffect based on redux state brought in with useSelector
 	useEffect(() => {
 		// show message in state if isError state true
 		if (isError) {
