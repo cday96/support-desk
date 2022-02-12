@@ -28,6 +28,11 @@ app.get("/", (req, res) => {
 
 // Routes for users
 app.use("/api/users", require("./routes/userRoutes"))
+
+// Routes for tickets
+app.use("/api/tickets", require("./routes/ticketRoutes"))
+
+// Error handling
 app.use(errorHandler)
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
