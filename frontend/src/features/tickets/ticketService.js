@@ -30,9 +30,24 @@ const getTickets = async (token) => {
 	return res.data
 }
 
+// Get user ticket
+const getTicket = async (ticketId, token) => {
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	}
+
+	// Hit the protected endpoint used for creating ticket in backend using the auth config
+	const res = await axios.get(API_URL + ticketId, config)
+
+	return res.data
+}
+
 const ticketService = {
 	createTicket,
 	getTickets,
+	getTicket,
 }
 
 export default ticketService

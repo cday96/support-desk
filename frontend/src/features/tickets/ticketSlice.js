@@ -60,6 +60,28 @@ export const getTickets = createAsyncThunk(
 	}
 )
 
+// Create a function to submit get user tickets action to backend
+export const getTicket = createAsyncThunk(
+	"tickets/get",
+	async (ticketId, thunkAPI) => {
+		try {
+			// get the token from the auth state so we can submit to protected route
+			const token = thunkAPI.getState().auth.user.token
+			// pass data and token to the service
+			return await ticketService.getTicket(ticketId, token)
+		} catch (error) {
+			// console.log(error.response)
+			const message =
+				(error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString()
+			return thunkAPI.rejectWithValue(message)
+		}
+	}
+)
+
 // Export the slice that contains your state and reducers
 export const ticketSlice = createSlice({
 	name: "ticket",
@@ -94,6 +116,19 @@ export const ticketSlice = createSlice({
 				state.tickets = action.payload
 			})
 			.addCase(getTickets.rejected, (state, action) => {
+				state.isLoading = false
+				state.isError = true
+				state.message = action.payload
+			})
+			.addCase(getTicket.pending, (state) => {
+				state.isLoading = true
+			})
+			.addCase(getTicket.fulfilled, (state, action) => {
+				state.isLoading = false
+				state.isSuccess = true
+				state.ticket = action.payload
+			})
+			.addCase(getTicket.rejected, (state, action) => {
 				state.isLoading = false
 				state.isError = true
 				state.message = action.payload
