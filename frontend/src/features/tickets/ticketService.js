@@ -38,8 +38,27 @@ const getTicket = async (ticketId, token) => {
 		},
 	}
 
-	// Hit the protected endpoint used for creating ticket in backend using the auth config
+	// Hit the protected endpoint used for reading ticket in backend using the auth config
 	const res = await axios.get(API_URL + ticketId, config)
+
+	return res.data
+}
+
+// Close user ticket
+const closeTicket = async (ticketId, token) => {
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	}
+
+	// Hit the protected endpoint used for updatinging ticket in backend using the auth config
+	// Only want to update the status so send opject in request with new status value
+	const res = await axios.put(
+		API_URL + ticketId,
+		{ status: "Closed" },
+		config
+	)
 
 	return res.data
 }
@@ -48,6 +67,7 @@ const ticketService = {
 	createTicket,
 	getTickets,
 	getTicket,
+	closeTicket,
 }
 
 export default ticketService
