@@ -11,6 +11,11 @@ const {
 // Import Middleware
 const { protect } = require("../Middleware/authMiddleware")
 
+// Re-route into noteRouter so we can append it onto the needed ticket route
+const noteRouter = require("./noteRoutes")
+router.use("/:ticketId/notes", noteRouter)
+
+// Set up ticket routes
 // Allow user to create a ticket
 router.post("/", protect, createTicket)
 
