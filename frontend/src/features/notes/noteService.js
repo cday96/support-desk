@@ -2,8 +2,8 @@ import axios from "axios"
 
 const API_URL = "http://localhost:5000/api/tickets/"
 
-// Add a note
-const addNote = async (noteData, token) => {
+// Add a note to ticket
+const addNote = async (noteText, ticketId, token) => {
 	const config = {
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -11,7 +11,11 @@ const addNote = async (noteData, token) => {
 	}
 
 	// Hit the protected endpoint used for creating ticket in backend using the auth config
-	const res = await axios.post(API_URL, noteData, config)
+	const res = await axios.post(
+		API_URL + ticketId + "/notes",
+		{ text: noteText },
+		config
+	)
 
 	return res.data
 }

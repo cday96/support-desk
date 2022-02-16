@@ -11,28 +11,24 @@ const initialState = {
 }
 
 // Create a function to submit add note action to backend
-// export const addNote = createAsyncThunk(
-// 	"notes/add",
-// 	async (noteData, thunkAPI) => {
-// 		// first arg of noteData is coming from ticket form
-// 		console.log(noteData)
-// 		try {
-// 			// get the token from the auth state so we can submit to protected route
-// 			const token = thunkAPI.getState().auth.user.token
-// 			// pass data and token to the servive
-// 			return await noteService.addNote(noteData, token)
-// 		} catch (error) {
-// 			// console.log(error.response)
-// 			const message =
-// 				(error.response &&
-// 					error.response.data &&
-// 					error.response.data.message) ||
-// 				error.message ||
-// 				error.toString()
-// 			return thunkAPI.rejectWithValue(message)
-// 		}
-// 	}
-// )
+export const addNote = createAsyncThunk(
+	"notes/add",
+	async ({ noteText, ticketId }, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token
+			return await noteService.addNote(noteText, ticketId, token)
+		} catch (error) {
+			console.log(error.response)
+			const message =
+				(error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString()
+			return thunkAPI.rejectWithValue(message)
+		}
+	}
+)
 
 // Create a function to submit get notes action to backend
 export const getNotes = createAsyncThunk(
@@ -73,6 +69,20 @@ export const noteSlice = createSlice({
 				state.notes = action.payload
 			})
 			.addCase(getNotes.rejected, (state, action) => {
+				state.isLoading = false
+				state.isError = true
+				state.message = action.payload
+			})
+			.addCase(addNote.pending, (state) => {
+				state.isLoading = true
+			})
+			.addCase(addNote.fulfilled, (state, action) => {
+				state.isLoading = false
+				state.isSuccess = true
+				// push the new note to the notes state so can see without reloading page
+				state.notes.push(action.payload)
+			})
+			.addCase(addNote.rejected, (state, action) => {
 				state.isLoading = false
 				state.isError = true
 				state.message = action.payload
